@@ -25,6 +25,10 @@ h2 {
     cursor: pointer;
 }
 
+.ancients-item.active {
+    border: solid 3px red;
+}
+
 .ancients-item img {
     width: 100%;
 }
@@ -48,4 +52,74 @@ h2 {
 
 .difficulties-item p {
     padding: 8px;
+}
+
+.btn {
+    margin-top: 40px;
+}
+
+.main-btn {
+    display: block;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.deck-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 30px 0;
+}
+
+.current-state {
+    display: flex;
+    width: 200px;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 30%;
+}
+
+.stage-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dots-container {
+    align-items: center;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.dot {
+    align-items: center;
+    border-radius: 50%;
+    display: flex;
+    height: 30px;
+    justify-content: center;
+    width: 30px;
+}
+
+.dot.green {
+    background-color: green;
+}
+
+.dot.brown {
+    background-color: brown;
+}
+
+.dot.blue {
+    background-color: blue;
+}
+
+.deck {
+    background-image: url('assets/mythicCardBackground.png');
+    width: 200px;
+    height: 293px;
+}
+
+.card {
+    width: 200px;
+    height: 293px;
 }
