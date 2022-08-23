@@ -114,12 +114,14 @@ h2 {
 }
 
 .deck {
-    background-image: url('assets/mythicCardBackground.png');
     width: 200px;
     height: 293px;
+    cursor: pointer;
 }
 
 .card {
     width: 200px;
     height: 293px;
+    background-position: center center;
+    background-size: cover;
 }
