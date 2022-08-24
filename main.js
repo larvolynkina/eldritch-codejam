@@ -7,6 +7,8 @@ const ancientsParent = document.querySelector('.ancients-list');
 const btn = document.querySelector('.main-btn');
 const deck = document.querySelector('.deck');
 const card = document.querySelector('.card');
+const levels = document.querySelectorAll('.difficulties-item');
+const levelsList = document.querySelector('.difficulties-list');
 
 class Dots {
   constructor(data, parentSelector) {
@@ -44,25 +46,49 @@ class Dots {
   }
 }
 
+function generateRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 let selectedAncient;
+let ancientCheck = false;
+let greenTotalNumbers;
+let brownTotalNumbers;
+let blueTotalNumbers;
+
+function totalNumbers(colour) {
+  return (
+    selectedAncient.firstStage[colour] +
+    selectedAncient.secondStage[colour] +
+    selectedAncient.thirdStage[colour]
+  );
+}
 
 ancientsParent.addEventListener('click', (e) => {
   ancients.forEach((ancient) => {
     ancient.classList.remove('active');
   });
+  levels.forEach((level) => {
+    level.classList.remove('active');
+  });
+  deck.style.backgroundImage = '';
+  card.style.backgroundImage = '';
+  if (document.querySelector('.current-state') !== null) {
+    document.querySelector('.current-state').remove();
+  }
   const div = e.target.closest('div');
   div.classList.add('active');
   ancientsData.forEach((item) => {
     if (item.id === div.id) {
-      console.log(item.firstStage.greenCards);
       selectedAncient = item;
     }
   });
-});
+  ancientCheck = true;
 
-function generateRandomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+  greenTotalNumbers = totalNumbers('greenCards');
+  brownTotalNumbers = totalNumbers('brownCards');
+  blueTotalNumbers = totalNumbers('blueCards');
+});
 
 function makeQueue(colour, min, max, n) {
   const res = [];
@@ -77,66 +103,67 @@ function makeQueue(colour, min, max, n) {
   return res;
 }
 
+function makeQueueCut(arr, total) {
+  const res = [];
+  for (let i = 0; i < total; i += 1) {
+    res.push(arr[arr.length - 1 - i]);
+  }
+  return res;
+}
+
 let firstStage;
 let secondStage;
 let thirdStage;
+let greenQueue;
+let brownQueue;
+let blueQueue;
+
+// Сформировать очередь при нормальном уровне сложности
+
+function makeStage(stage) {
+  const result = [];
+  for (let i = 0; i < stage.greenCards; i += 1) {
+    result.push(greenQueue[0]);
+    greenQueue = greenQueue.slice(1);
+  }
+  for (let i = 0; i < stage.brownCards; i += 1) {
+    result.push(brownQueue[0]);
+    brownQueue = brownQueue.slice(1);
+  }
+  for (let i = 0; i < stage.blueCards; i += 1) {
+    result.push(blueQueue[0]);
+    blueQueue = blueQueue.slice(1);
+  }
+  return result;
+}
+
+function mixarr(arr) {
+  return arr
+    .map((i) => [Math.random(), i])
+    .sort()
+    .map((i) => i[1]);
+}
 
 btn.addEventListener('click', () => {
-  if (document.querySelector('.current-state') === null) {
-    new Dots(selectedAncient, '.deck-container').render();
+  if (ancientCheck) {
+    if (document.querySelector('.current-state') === null) {
+      new Dots(selectedAncient, '.deck-container').render();
+    } else {
+      document.querySelector('.current-state').remove();
+      new Dots(selectedAncient, '.deck-container').render();
+    }
+
+    firstStage = mixarr(makeStage(selectedAncient.firstStage));
+    console.log(firstStage);
+    secondStage = mixarr(makeStage(selectedAncient.secondStage));
+    console.log(secondStage);
+    thirdStage = mixarr(makeStage(selectedAncient.thirdStage));
+    console.log(thirdStage);
+
+    deck.style.backgroundImage = `url('assets/mythicCardBackground.png')`;
   } else {
-    document.querySelector('.current-state').remove();
-    new Dots(selectedAncient, '.deck-container').render();
+    alert('Выберите Древнего!');
   }
-
-  const greenTotalNumbers =
-    selectedAncient.firstStage.greenCards +
-    selectedAncient.secondStage.greenCards +
-    selectedAncient.thirdStage.greenCards;
-
-  const brownTotalNumbers =
-    selectedAncient.firstStage.brownCards +
-    selectedAncient.secondStage.brownCards +
-    selectedAncient.thirdStage.brownCards;
-
-  const blueTotalNumbers =
-    selectedAncient.firstStage.blueCards +
-    selectedAncient.secondStage.blueCards +
-    selectedAncient.thirdStage.blueCards;
-
-  let greenQueue = makeQueue('green', 1, 18, greenTotalNumbers);
-  let brownQueue = makeQueue('brown', 1, 21, brownTotalNumbers);
-  let blueQueue = makeQueue('blue', 1, 12, blueTotalNumbers);
-
-  function makeStage(stage) {
-    const result = [];
-    for (let i = 0; i < stage.greenCards; i += 1) {
-      result.push(greenQueue[0]);
-      greenQueue = greenQueue.slice(1);
-    }
-    for (let i = 0; i < stage.brownCards; i += 1) {
-      result.push(brownQueue[0]);
-      brownQueue = brownQueue.slice(1);
-    }
-    for (let i = 0; i < stage.blueCards; i += 1) {
-      result.push(blueQueue[0]);
-      blueQueue = blueQueue.slice(1);
-    }
-    return result;
-  }
-
-  function mixarr(arr) {
-    return arr
-      .map((i) => [Math.random(), i])
-      .sort()
-      .map((i) => i[1]);
-  }
-
-  firstStage = mixarr(makeStage(selectedAncient.firstStage));
-  secondStage = mixarr(makeStage(selectedAncient.secondStage));
-  thirdStage = mixarr(makeStage(selectedAncient.thirdStage));
-
-  deck.style.backgroundImage = `url('assets/mythicCardBackground.png')`;
 });
 
 deck.addEventListener('click', () => {
@@ -220,5 +247,160 @@ deck.addEventListener('click', () => {
     }
   } else {
     deck.style.backgroundImage = '';
+  }
+});
+
+levelsList.addEventListener('click', (e) => {
+  levels.forEach((level) => {
+    level.classList.remove('active');
+  });
+  e.target.closest('div').classList.add('active');
+  // очень легкий уровень
+  if (e.target.innerText === difficulties[0].name) {
+    const veryEasyGreen = mixarr(
+      greenCards
+        .filter((value) => value.difficulty === 'easy')
+        .map((item) => item.id)
+    );
+    const veryEasyBrown = mixarr(
+      brownCards
+        .filter((value) => value.difficulty === 'easy')
+        .map((item) => item.id)
+    );
+    const veryEasyBlue = mixarr(
+      blueCards
+        .filter((value) => value.difficulty === 'easy')
+        .map((item) => item.id)
+    );
+    if (veryEasyGreen >= greenTotalNumbers) {
+      greenQueue = makeQueueCut(veryEasyGreen, greenTotalNumbers);
+    } else {
+      const normalGreen = mixarr(
+        greenCards
+          .filter((value) => value.difficulty === 'normal')
+          .map((item) => item.id)
+      );
+      const n = veryEasyGreen.length;
+      for (let i = 0; i < greenTotalNumbers - n; i += 1) {
+        veryEasyGreen.push(normalGreen[normalGreen.length - 1 - i]);
+      }
+      greenQueue = makeQueueCut(mixarr(veryEasyGreen), greenTotalNumbers);
+    }
+    if (veryEasyBrown >= brownTotalNumbers) {
+      brownQueue = makeQueueCut(veryEasyBrown, brownTotalNumbers);
+    } else {
+      const normalBrown = mixarr(
+        brownCards
+          .filter((value) => value.difficulty === 'normal')
+          .map((item) => item.id)
+      );
+      const n = veryEasyBrown.length;
+      for (let i = 0; i < brownTotalNumbers - n; i += 1) {
+        veryEasyBrown.push(normalBrown[normalBrown.length - 1 - i]);
+      }
+
+      brownQueue = makeQueueCut(mixarr(veryEasyBrown), brownTotalNumbers);
+    }
+    blueQueue = makeQueueCut(mixarr(veryEasyBlue), blueTotalNumbers);
+  }
+  // легкий уровень
+  if (e.target.innerText === difficulties[1].name) {
+    const easyGreen = mixarr(
+      greenCards
+        .filter((value) => value.difficulty !== 'hard')
+        .map((item) => item.id)
+    );
+    const easyBrown = mixarr(
+      brownCards
+        .filter((value) => value.difficulty !== 'hard')
+        .map((item) => item.id)
+    );
+    const easyBlue = mixarr(
+      blueCards
+        .filter((value) => value.difficulty !== 'hard')
+        .map((item) => item.id)
+    );
+
+    greenQueue = makeQueueCut(easyGreen, greenTotalNumbers);
+    brownQueue = makeQueueCut(easyBrown, brownTotalNumbers);
+    blueQueue = makeQueueCut(easyBlue, blueTotalNumbers);
+  }
+
+  // средний уровень
+  if (e.target.innerText === difficulties[2].name) {
+    greenQueue = makeQueue('green', 1, 18, greenTotalNumbers);
+    brownQueue = makeQueue('brown', 1, 21, brownTotalNumbers);
+    blueQueue = makeQueue('blue', 1, 12, blueTotalNumbers);
+  }
+  // высокий уровень
+  if (e.target.innerText === difficulties[3].name) {
+    const hardGreen = mixarr(
+      greenCards
+        .filter((value) => value.difficulty !== 'easy')
+        .map((item) => item.id)
+    );
+    const hardBrown = mixarr(
+      brownCards
+        .filter((value) => value.difficulty !== 'easy')
+        .map((item) => item.id)
+    );
+    const hardBlue = mixarr(
+      blueCards
+        .filter((value) => value.difficulty !== 'easy')
+        .map((item) => item.id)
+    );
+
+    greenQueue = makeQueueCut(hardGreen, greenTotalNumbers);
+    brownQueue = makeQueueCut(hardBrown, brownTotalNumbers);
+    blueQueue = makeQueueCut(hardBlue, blueTotalNumbers);
+  }
+
+  // очень высокий уровень
+  if (e.target.innerText === difficulties[4].name) {
+    const veryHardGreen = mixarr(
+      greenCards
+        .filter((value) => value.difficulty === 'hard')
+        .map((item) => item.id)
+    );
+    const veryHardBrown = mixarr(
+      brownCards
+        .filter((value) => value.difficulty === 'hard')
+        .map((item) => item.id)
+    );
+    const veryHardBlue = mixarr(
+      blueCards
+        .filter((value) => value.difficulty === 'hard')
+        .map((item) => item.id)
+    );
+    if (veryHardGreen >= greenTotalNumbers) {
+      greenQueue = makeQueueCut(veryHardGreen, greenTotalNumbers);
+    } else {
+      const normalGreen = mixarr(
+        greenCards
+          .filter((value) => value.difficulty === 'normal')
+          .map((item) => item.id)
+      );
+      const n = veryHardGreen.length;
+      for (let i = 0; i < greenTotalNumbers - n; i += 1) {
+        veryHardGreen.push(normalGreen[normalGreen.length - 1 - i]);
+      }
+      greenQueue = makeQueueCut(mixarr(veryHardGreen), greenTotalNumbers);
+    }
+    if (veryHardBrown >= brownTotalNumbers) {
+      brownQueue = makeQueueCut(veryHardBrown, brownTotalNumbers);
+    } else {
+      const normalBrown = mixarr(
+        brownCards
+          .filter((value) => value.difficulty === 'normal')
+          .map((item) => item.id)
+      );
+      const n = veryHardBrown.length;
+      for (let i = 0; i < brownTotalNumbers - n; i += 1) {
+        veryHardBrown.push(normalBrown[normalBrown.length - 1 - i]);
+      }
+
+      brownQueue = makeQueueCut(mixarr(veryHardBrown), brownTotalNumbers);
+    }
+    blueQueue = makeQueueCut(mixarr(veryHardBlue), blueTotalNumbers);
   }
 });

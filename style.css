@@ -26,7 +26,7 @@ h2 {
 }
 
 .ancients-item.active {
-    border: solid 3px red;
+    border: solid 3px chocolate;
 }
 
 .ancients-item img {
@@ -48,6 +48,10 @@ h2 {
     border-radius: 10px;
     text-align: center;
     vertical-align: middle;
+}
+
+.difficulties-item.active {
+    background-color: chocolate;
 }
 
 .difficulties-item p {
