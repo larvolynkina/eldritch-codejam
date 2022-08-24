@@ -52,6 +52,7 @@ function generateRandomNumber(min, max) {
 
 let selectedAncient;
 let ancientCheck = false;
+let levelCheck = false;
 let greenTotalNumbers;
 let brownTotalNumbers;
 let blueTotalNumbers;
@@ -64,10 +65,7 @@ function totalNumbers(colour) {
   );
 }
 
-ancientsParent.addEventListener('click', (e) => {
-  ancients.forEach((ancient) => {
-    ancient.classList.remove('active');
-  });
+function clearDeck() {
   levels.forEach((level) => {
     level.classList.remove('active');
   });
@@ -76,6 +74,15 @@ ancientsParent.addEventListener('click', (e) => {
   if (document.querySelector('.current-state') !== null) {
     document.querySelector('.current-state').remove();
   }
+}
+
+ancientsParent.addEventListener('click', (e) => {
+  levelCheck = false;
+  btn.style.display = '';
+  ancients.forEach((ancient) => {
+    ancient.classList.remove('active');
+  });
+  clearDeck();
   const div = e.target.closest('div');
   div.classList.add('active');
   ancientsData.forEach((item) => {
@@ -145,7 +152,7 @@ function mixarr(arr) {
 }
 
 btn.addEventListener('click', () => {
-  if (ancientCheck) {
+  if (ancientCheck && levelCheck) {
     if (document.querySelector('.current-state') === null) {
       new Dots(selectedAncient, '.deck-container').render();
     } else {
@@ -161,8 +168,9 @@ btn.addEventListener('click', () => {
     console.log(thirdStage);
 
     deck.style.backgroundImage = `url('assets/mythicCardBackground.png')`;
+    btn.style.display = 'none';
   } else {
-    alert('Выберите Древнего!');
+    alert('Выберите Древнего и уровень сложности!');
   }
 });
 
@@ -251,9 +259,9 @@ deck.addEventListener('click', () => {
 });
 
 levelsList.addEventListener('click', (e) => {
-  levels.forEach((level) => {
-    level.classList.remove('active');
-  });
+  levelCheck = true;
+  btn.style.display = '';
+  clearDeck();
   e.target.closest('div').classList.add('active');
   // очень легкий уровень
   if (e.target.innerText === difficulties[0].name) {
