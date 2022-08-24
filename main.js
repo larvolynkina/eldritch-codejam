@@ -161,11 +161,8 @@ btn.addEventListener('click', () => {
     }
 
     firstStage = mixarr(makeStage(selectedAncient.firstStage));
-    console.log(firstStage);
     secondStage = mixarr(makeStage(selectedAncient.secondStage));
-    console.log(secondStage);
     thirdStage = mixarr(makeStage(selectedAncient.thirdStage));
-    console.log(thirdStage);
 
     deck.style.backgroundImage = `url('assets/mythicCardBackground.png')`;
     btn.style.display = 'none';
@@ -180,7 +177,6 @@ deck.addEventListener('click', () => {
   const brown = document.querySelectorAll('.brown');
   if (firstStage.length > 0) {
     const current = firstStage[firstStage.length - 1];
-    console.log(current);
     if (current.slice(0, 4) === 'blue') {
       card.style.backgroundImage = `url('assets/MythicCards/${current.slice(
         0,
@@ -205,7 +201,6 @@ deck.addEventListener('click', () => {
     }
   } else if (secondStage.length > 0) {
     const current = secondStage[secondStage.length - 1];
-    console.log(current);
     if (current.slice(0, 4) === 'blue') {
       card.style.backgroundImage = `url('assets/MythicCards/${current.slice(
         0,
@@ -230,7 +225,6 @@ deck.addEventListener('click', () => {
     }
   } else if (thirdStage.length > 0) {
     const current = thirdStage[thirdStage.length - 1];
-    console.log(current);
     if (current.slice(0, 4) === 'blue') {
       card.style.backgroundImage = `url('assets/MythicCards/${current.slice(
         0,
